@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>User Management</title>
+    <!-- Basit ve okunabilir bir görünüm için minimal bir stil eklenebilir -->
+    <style>
+        body {
+          font-family: sans-serif;
+          margin: 2rem;
+        }
+        header {
+          margin-bottom: 1rem;
+        }
+        form {
+          margin-bottom: 1rem;
+          display: flex;
+          flex-direction: column;
+          max-width: 300px;
+        }
+        label {
+          margin-top: 0.5rem;
+        }
+        input[type="text"],
+        input[type="email"] {
+          padding: 0.3rem;
+          margin-top: 0.2rem;
+        }
+        button {
+          margin-top: 1rem;
+          cursor: pointer;
+        }
+        table {
+          border-collapse: collapse;
+          width: 100%;
+          margin-top: 1rem;
+        }
+        th, td {
+          border: 1px solid #ddd;
+          padding: 0.5rem;
+          text-align: left;
+        }
+        tr:nth-child(even) {
+          background-color: #f2f2f2;
+        }
+        .hidden {
+          display: none;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>User Management Page</h1>
+    <p>Bu sayfa, Spring Boot projesindeki /users endpointlerini çağırarak temel CRUD işlemlerini gerçekleştirir.</p>
+</header>
+
+<!-- CREATE or UPDATE FORM -->
+<section>
+    <h2 id="form-title">Create User</h2>
+    <form id="user-form">
+        <label for="userId">User ID (Sadece Güncelleme İçin Kullan)</label>
+        <input type="text" id="userId" name="userId" readonly />
+
+        <label for="name">Name</label>
+        <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Enter your name"
+                required
+        />
+
+        <label for="email">Email</label>
+        <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="example@mail.com"
+                required
+        />
+
+        <button type="submit" id="submitBtn">Create User</button>
+        <button type="button" id="resetBtn">Reset Form</button>
+    </form>
+</section>
+
+<!-- GET ALL USERS -->
+<section>
+    <h2>All Users</h2>
+    <button type="button" id="getAllBtn">Refresh Users</button>
+    <table id="usersTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Kullanıcı satırları JS ile eklenecek -->
+        </tbody>
+    </table>
+</section>
+
+<!-- GET USER BY EMAIL -->
+<section style="margin-top: 2rem;">
+    <h2>Get User By Email</h2>
+    <form id="email-form">
+        <label for="searchEmail">Email</label>
+        <input
+                type="email"
+                id="searchEmail"
+                name="searchEmail"
+                placeholder="example@mail.com"
+                required
+        />
+        <button type="submit">Search</button>
+    </form>
+    <div id="searchResult" class="hidden">
+        <h3>Search Result:</h3>
+        <p id="resultContent"></p>
+    </div>
+</section>
+
+<script>
+    // Backend URL (Spring Boot)
+    // Eğer backend farklı bir portta veya sunucuda çalışıyorsa burayı değiştir.
+    const BASE_URL = "http://localhost:8080/users";
+
+    // DOM Selectors
+    const userIdInput   = document.getElementById("userId");
+    const nameInput     = document.getElementById("name");
+    const emailInput    = document.getElementById("email");
+    const userForm      = document.getElementById("user-form");
+    const getAllBtn     = document.getElementById("getAllBtn");
+    const usersTableTbody = document.querySelector("#usersTable tbody");
+    const formTitle     = document.getElementById("form-title");
+    const submitBtn     = document.getElementById("submitBtn");
+    const resetBtn      = document.getElementById("resetBtn");
+
+    const emailForm     = document.getElementById("email-form");
+    const searchEmail   = document.getElementById("searchEmail");
+    const searchResult  = document.getElementById("searchResult");
+    const resultContent = document.getElementById("resultContent");
+
+    // --- FORM SUBMIT (Create or Update) ---
+    userForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      // Eğer form valid değilse tarayıcıda HTML5 validasyonunu çalıştır
+      if (!userForm.checkValidity()) {
+        userForm.reportValidity();
+        return;
+      }
+
+      const idValue = userIdInput.value.trim();
+      const nameValue = nameInput.value.trim();
+      const emailValue = emailInput.value.trim();
+
+      const userData = { name: nameValue, email: emailValue };
+
+      try {
+        let response;
+        // ID alanı dolu ise güncelleme yapıyoruz
+        if (idValue) {
+          response = await fetch(`${BASE_URL}/${idValue}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData),
+          });
+        } else {
+          // ID boş ise yeni kayıt oluşturuyoruz
+          response = await fetch(`${BASE_URL}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData),
+          });
+        }
+
+        if (!response.ok) {
+          throw new Error("Bir hata oluştu: " + response.status);
+        }
+
+        // Başarılı ise tabloyu güncelle
+        await getAllUsers();
+        // Formu temizle
+        resetForm();
+      } catch (error) {
+        alert("Kullanıcı kaydedilirken/güncellenirken hata oluştu: " + error);
+      }
+    });
+
+    // --- RESET FORM ---
+    resetBtn.addEventListener("click", resetForm);
+
+    function resetForm() {
+      userIdInput.value = "";
+      nameInput.value = "";
+      emailInput.value = "";
+      formTitle.textContent = "Create User";
+      submitBtn.textContent = "Create User";
+    }
+
+    // --- GET ALL USERS ---
+    getAllBtn.addEventListener("click", getAllUsers);
+
+    async function getAllUsers() {
+      try {
+        const response = await fetch(BASE_URL);
+        if (!response.ok) {
+          throw new Error("Kullanıcıları getirirken hata oluştu: " + response.status);
+        }
+        const users = await response.json();
+
+        // Tabloyu temizle
+        usersTableTbody.innerHTML = "";
+
+        // Yeni satırları ekle
+        users.forEach((user) => {
+          const tr = document.createElement("tr");
+
+          const tdId = document.createElement("td");
+          tdId.textContent = user.id;
+
+          const tdName = document.createElement("td");
+          tdName.textContent = user.name;
+
+          const tdEmail = document.createElement("td");
+          tdEmail.textContent = user.email;
+
+          const tdActions = document.createElement("td");
+
+          // Edit butonu
+          const editBtn = document.createElement("button");
+          editBtn.textContent = "Edit";
+          editBtn.addEventListener("click", () => {
+            fillFormForEdit(user);
+          });
+
+          // Delete butonu
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "Delete";
+          deleteBtn.addEventListener("click", () => {
+            deleteUser(user.id);
+          });
+
+          tdActions.appendChild(editBtn);
+          tdActions.appendChild(document.createTextNode(" "));
+          tdActions.appendChild(deleteBtn);
+
+          tr.appendChild(tdId);
+          tr.appendChild(tdName);
+          tr.appendChild(tdEmail);
+          tr.appendChild(tdActions);
+
+          usersTableTbody.appendChild(tr);
+        });
+
+      } catch (error) {
+        alert("Hata: " + error);
+      }
+    }
+
+    // Formu güncelleme moduna geçiren fonksiyon
+    function fillFormForEdit(user) {
+      userIdInput.value = user.id;
+      nameInput.value = user.name;
+      emailInput.value = user.email;
+      formTitle.textContent = "Update User";
+      submitBtn.textContent = "Update User";
+    }
+
+    // --- DELETE USER ---
+    async function deleteUser(id) {
+      if (!confirm("Bu kullanıcıyı silmek istediğine emin misin?")) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`${BASE_URL}/${id}`, {
+          method: "DELETE",
+        });
+        if (response.status === 204) {
+          // Silme başarılı
+          alert("Kullanıcı başarıyla silindi.");
+          getAllUsers();
+        } else if (response.status === 404) {
+          alert("Silinmek istenen kullanıcı bulunamadı.");
+        } else {
+          alert("Silme işlemi başarısız oldu. Hata kodu: " + response.status);
+        }
+      } catch (error) {
+        alert("Kullanıcı silinirken hata oluştu: " + error);
+      }
+    }
+
+    // --- GET USER BY EMAIL ---
+    emailForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!emailForm.checkValidity()) {
+        emailForm.reportValidity();
+        return;
+      }
+      try {
+        const searchValue = searchEmail.value.trim();
+        if (!searchValue) return;
+
+        const response = await fetch(`${BASE_URL}/email?email=${encodeURIComponent(searchValue)}`);
+        if (!response.ok) {
+          throw new Error("Kullanıcı aranırken hata oluştu: " + response.status);
+        }
+        const user = await response.json();  // Beklenen tip: Optional<User>
+
+        // user bir Optional<User> şeklinde geliyor.
+        // Java tarafında Optional boşsa JSON'da "null" veya "{}" gibi dönebilir.
+        // Bunu yakalayarak görüntüleyeceğiz.
+        searchResult.classList.remove("hidden");
+        if (user && user.id) {
+          resultContent.textContent = `User Found => ID: ${user.id}, Name: ${user.name}, Email: ${user.email}`;
+        } else {
+          resultContent.textContent = "Kullanıcı bulunamadı veya e-posta eşleşmesi yok.";
+        }
+      } catch (error) {
+        alert("Hata: " + error);
+      }
+    });
+
+    // Sayfa yüklenince otomatik olarak tüm kullanıcıları çekelim
+    window.addEventListener("load", () => {
+      getAllUsers();
+    });
+</script>
+</body>
+</html>
