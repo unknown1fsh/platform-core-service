@@ -1,335 +1,317 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8" />
-    <title>User Management</title>
-    <!-- Basit ve okunabilir bir görünüm için minimal bir stil eklenebilir -->
-    <style>
-        body {
-          font-family: sans-serif;
-          margin: 2rem;
-        }
-        header {
-          margin-bottom: 1rem;
-        }
-        form {
-          margin-bottom: 1rem;
-          display: flex;
-          flex-direction: column;
-          max-width: 300px;
-        }
-        label {
-          margin-top: 0.5rem;
-        }
-        input[type="text"],
-        input[type="email"] {
-          padding: 0.3rem;
-          margin-top: 0.2rem;
-        }
-        button {
-          margin-top: 1rem;
-          cursor: pointer;
-        }
-        table {
-          border-collapse: collapse;
-          width: 100%;
-          margin-top: 1rem;
-        }
-        th, td {
-          border: 1px solid #ddd;
-          padding: 0.5rem;
-          text-align: left;
-        }
-        tr:nth-child(even) {
-          background-color: #f2f2f2;
-        }
-        .hidden {
-          display: none;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kullanıcı Yönetimi</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          darkMode: 'class',
+          theme: {
+            extend: {
+              backgroundImage: {
+                'arka-plan': 'linear-gradient(90deg,#667eea 0%,#764ba2 100%)',
+              },
+            },
+          },
+        };
+    </script>
 </head>
-<body>
-<header>
-    <h1>User Management Page</h1>
-    <p>Bu sayfa, Spring Boot projesindeki /users endpointlerini çağırarak temel CRUD işlemlerini gerçekleştirir.</p>
+<body class="bg-arka-plan min-h-screen flex flex-col text-gray-100">
+
+<!-- Başlık -->
+<header class="container mx-auto py-6">
+    <h1 class="text-4xl font-bold mb-2">Kullanıcı Yönetimi</h1>
+    <p class="opacity-80">
+        Spring Boot <code class="bg-gray-800 rounded px-1">/users</code> uç noktaları üzerinden CRUD işlemleri.
+    </p>
 </header>
 
-<!-- CREATE or UPDATE FORM -->
-<section>
-    <h2 id="form-title">Create User</h2>
-    <form id="user-form">
-        <label for="userId">User ID (Sadece Güncelleme İçin Kullan)</label>
-        <input type="text" id="userId" name="userId" readonly />
+<!-- Ana Izgara -->
+<main class="container mx-auto grid grid-cols-1 gap-8 md:grid-cols-2">
 
-        <label for="name">Name</label>
-        <input
-                type="text"
-                id="name"
-                name="name"
-                placeholder="Enter your name"
-                required
-        />
+    <!-- Form Kartı -->
+    <section class="rounded-2xl bg-white/10 p-6 shadow-xl backdrop-blur-lg hover:shadow-2xl transition-shadow">
+        <h2 id="form-baslik" class="mb-4 text-2xl font-semibold">Kullanıcı Oluştur</h2>
+        <form id="kullanici-formu" class="space-y-4">
+            <div>
+                <label for="kullaniciId" class="block text-sm font-medium">Kullanıcı ID (Güncelleme İçin)</label>
+                <input type="text" id="kullaniciId" name="kullaniciId"
+                       readonly
+                       class="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800/40 p-2" />
+            </div>
 
-        <label for="email">Email</label>
-        <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="example@mail.com"
-                required
-        />
+            <div>
+                <label for="ad" class="block text-sm font-medium">Ad ve Soyad</label>
+                <input type="text" id="ad" name="ad"
+                       placeholder="Adınızı ve Soyadınızı girin" required
+                       class="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800/40 p-2" />
+            </div>
 
-        <button type="submit" id="submitBtn">Create User</button>
-        <button type="button" id="resetBtn">Reset Form</button>
-    </form>
-</section>
+            <div>
+                <label for="eposta" class="block text-sm font-medium">E-posta</label>
+                <input type="email" id="eposta" name="eposta"
+                       placeholder="ornek@mail.com" required
+                       class="mt-1 block w-full rounded-md border border-gray-600 bg-gray-800/40 p-2" />
+            </div>
 
-<!-- GET ALL USERS -->
-<section>
-    <h2>All Users</h2>
-    <button type="button" id="getAllBtn">Refresh Users</button>
-    <table id="usersTable">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- Kullanıcı satırları JS ile eklenecek -->
-        </tbody>
-    </table>
-</section>
+            <div class="flex gap-4">
+                <button type="submit" id="gonderBtn"
+                        class="flex-1 rounded-md bg-indigo-500 py-2 font-semibold transition-colors hover:bg-indigo-600">
+                    Kullanıcı Oluştur
+                </button>
+                <button type="button" id="sifirlaBtn"
+                        class="flex-1 rounded-md bg-gray-500 py-2 font-semibold transition-colors hover:bg-gray-600">
+                    Sıfırla
+                </button>
+            </div>
+        </form>
+    </section>
 
-<!-- GET USER BY EMAIL -->
-<section style="margin-top: 2rem;">
-    <h2>Get User By Email</h2>
-    <form id="email-form">
-        <label for="searchEmail">Email</label>
-        <input
-                type="email"
-                id="searchEmail"
-                name="searchEmail"
-                placeholder="example@mail.com"
-                required
-        />
-        <button type="submit">Search</button>
-    </form>
-    <div id="searchResult" class="hidden">
-        <h3>Search Result:</h3>
-        <p id="resultContent"></p>
-    </div>
-</section>
+    <!-- Kullanıcılar Tablosu Kartı -->
+    <section class="overflow-x-auto rounded-2xl bg-white/10 p-6 shadow-xl backdrop-blur-lg hover:shadow-2xl transition-shadow">
+        <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-2xl font-semibold">Tüm Kullanıcılar</h2>
+            <button type="button" id="tumunuGetirBtn"
+                    class="rounded-md bg-emerald-500 px-4 py-2 font-semibold transition-colors hover:bg-emerald-600">
+                Yenile
+            </button>
+        </div>
 
+        <table id="kullanicilarTablo" class="min-w-full divide-y divide-gray-600 text-sm">
+            <thead class="bg-gray-800/60">
+            <tr>
+                <th class="px-3 py-2 text-left">ID</th>
+                <th class="px-3 py-2 text-left">Ad ve Soyad</th>
+                <th class="px-3 py-2 text-left">E-posta</th>
+                <th class="px-3 py-2 text-left">İşlemler</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700"><!-- Dinamik --></tbody>
+        </table>
+    </section>
+
+    <!-- Arama Kartı -->
+    <section class="md:col-span-2 rounded-2xl bg-white/10 p-6 shadow-xl backdrop-blur-lg hover:shadow-2xl transition-shadow">
+        <h2 class="mb-4 text-2xl font-semibold">Kullanıcı Ara</h2>
+        <div class="grid gap-4 sm:grid-cols-3">
+            <div class="flex gap-2">
+                <input type="number" id="araId"
+                       placeholder="ID"
+                       class="flex-1 rounded-md border border-gray-600 bg-gray-800/40 p-2" />
+                <button id="araIdBtn"
+                        class="rounded-md bg-blue-500 px-3 py-2 font-semibold transition-colors hover:bg-blue-600">
+                    Ara
+                </button>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="araAd"
+                       placeholder="Ad veya Soyad"
+                       class="flex-1 rounded-md border border-gray-600 bg-gray-800/40 p-2" />
+                <button id="araAdBtn"
+                        class="rounded-md bg-blue-500 px-3 py-2 font-semibold transition-colors hover:bg-blue-600">
+                    Ara
+                </button>
+            </div>
+            <div class="flex gap-2">
+                <input type="email" id="araEposta"
+                       placeholder="E-posta"
+                       class="flex-1 rounded-md border border-gray-600 bg-gray-800/40 p-2" />
+                <button id="araEpostaBtn"
+                        class="rounded-md bg-blue-500 px-3 py-2 font-semibold transition-colors hover:bg-blue-600">
+                    Ara
+                </button>
+            </div>
+        </div>
+
+        <div id="aramaSonuc" class="hidden mt-4">
+            <h3 class="mb-1 text-xl font-semibold">Sonuç</h3>
+            <p id="sonucIcerik" class="whitespace-pre-line"></p>
+        </div>
+    </section>
+</main>
+
+<!-- Karanlık Mod Anahtarı -->
+<button id="temaBtn" title="Karanlık mod"
+        class="fixed bottom-6 right-6 rounded-full bg-black/40 p-3 shadow-lg backdrop-blur-lg transition-transform hover:scale-105">
+    <svg id="temaIkon" xmlns="http://www.w3.org/2000/svg"
+         class="h-6 w-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 4.354a1 1 0 011 .987v.678a8 8 0 11-7.665 11.06 1 1 0 011.4-1.314A6 6 0 1012 6.019v.678a1 1 0 01-2 0v-.678a1 1 0 011-1z" />
+    </svg>
+</button>
+
+<!-- Komut Dosyası -->
 <script>
-    // Backend URL (Spring Boot)
-    // Eğer backend farklı bir portta veya sunucuda çalışıyorsa burayı değiştir.
-    const BASE_URL = "http://localhost:8080/users";
+    const TEMEL_URL = "http://localhost:8080/users";
 
-    // DOM Selectors
-    const userIdInput   = document.getElementById("userId");
-    const nameInput     = document.getElementById("name");
-    const emailInput    = document.getElementById("email");
-    const userForm      = document.getElementById("user-form");
-    const getAllBtn     = document.getElementById("getAllBtn");
-    const usersTableTbody = document.querySelector("#usersTable tbody");
-    const formTitle     = document.getElementById("form-title");
-    const submitBtn     = document.getElementById("submitBtn");
-    const resetBtn      = document.getElementById("resetBtn");
+    // === DOM Seçicileri ===
+    const kullaniciIdInput = document.getElementById("kullaniciId");
+    const adInput          = document.getElementById("ad");
+    const epostaInput      = document.getElementById("eposta");
+    const kullaniciFormu   = document.getElementById("kullanici-formu");
+    const tumunuGetirBtn   = document.getElementById("tumunuGetirBtn");
+    const tabloGovde       = document.querySelector("#kullanicilarTablo tbody");
+    const formBaslik       = document.getElementById("form-baslik");
+    const gonderBtn        = document.getElementById("gonderBtn");
+    const sifirlaBtn       = document.getElementById("sifirlaBtn");
 
-    const emailForm     = document.getElementById("email-form");
-    const searchEmail   = document.getElementById("searchEmail");
-    const searchResult  = document.getElementById("searchResult");
-    const resultContent = document.getElementById("resultContent");
+    // Arama alanları
+    const araIdInput       = document.getElementById("araId");
+    const araAdInput       = document.getElementById("araAd");
+    const araEpostaInput   = document.getElementById("araEposta");
+    const araIdBtn         = document.getElementById("araIdBtn");
+    const araAdBtn         = document.getElementById("araAdBtn");
+    const araEpostaBtn     = document.getElementById("araEpostaBtn");
+    const aramaSonuc       = document.getElementById("aramaSonuc");
+    const sonucIcerik      = document.getElementById("sonucIcerik");
 
-    // --- FORM SUBMIT (Create or Update) ---
-    userForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      // Eğer form valid değilse tarayıcıda HTML5 validasyonunu çalıştır
-      if (!userForm.checkValidity()) {
-        userForm.reportValidity();
-        return;
-      }
-
-      const idValue = userIdInput.value.trim();
-      const nameValue = nameInput.value.trim();
-      const emailValue = emailInput.value.trim();
-
-      const userData = { name: nameValue, email: emailValue };
-
-      try {
-        let response;
-        // ID alanı dolu ise güncelleme yapıyoruz
-        if (idValue) {
-          response = await fetch(`${BASE_URL}/${idValue}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(userData),
-          });
-        } else {
-          // ID boş ise yeni kayıt oluşturuyoruz
-          response = await fetch(`${BASE_URL}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(userData),
-          });
-        }
-
-        if (!response.ok) {
-          throw new Error("Bir hata oluştu: " + response.status);
-        }
-
-        // Başarılı ise tabloyu güncelle
-        await getAllUsers();
-        // Formu temizle
-        resetForm();
-      } catch (error) {
-        alert("Kullanıcı kaydedilirken/güncellenirken hata oluştu: " + error);
-      }
+    // Tema anahtarı
+    document.getElementById("temaBtn").addEventListener("click", () => {
+      document.documentElement.classList.toggle("dark");
+      document.getElementById("temaIkon").classList.toggle("text-yellow-400");
+      document.getElementById("temaIkon").classList.toggle("text-gray-100");
     });
 
-    // --- RESET FORM ---
-    resetBtn.addEventListener("click", resetForm);
+    // === Yardımcı Fonksiyonlar ===
+    const formuSifirla = () => {
+      kullaniciIdInput.value = adInput.value = epostaInput.value = "";
+      formBaslik.textContent = "Kullanıcı Oluştur";
+      gonderBtn.textContent  = "Kullanıcı Oluştur";
+    };
 
-    function resetForm() {
-      userIdInput.value = "";
-      nameInput.value = "";
-      emailInput.value = "";
-      formTitle.textContent = "Create User";
-      submitBtn.textContent = "Create User";
-    }
+    const duzenlemeModu = (k) => {
+      kullaniciIdInput.value = k.id;
+      adInput.value          = k.name;
+      epostaInput.value      = k.email;
+      formBaslik.textContent = "Kullanıcı Güncelle";
+      gonderBtn.textContent  = "Güncelle";
+    };
 
-    // --- GET ALL USERS ---
-    getAllBtn.addEventListener("click", getAllUsers);
+    const aramaSonucGoster = (k) => {
+      aramaSonuc.classList.remove("hidden");
+      sonucIcerik.textContent = k && k.id
+        ? `ID: ${k.id}\nAd ve Soyad: ${k.name}\nE-posta: ${k.email}`
+        : "Kullanıcı bulunamadı.";
+    };
 
-    async function getAllUsers() {
+    // === CRUD İşlemleri ===
+    const tumKullanicilariGetir = async () => {
       try {
-        const response = await fetch(BASE_URL);
-        if (!response.ok) {
-          throw new Error("Kullanıcıları getirirken hata oluştu: " + response.status);
-        }
-        const users = await response.json();
+        const res = await fetch(TEMEL_URL);
+        if (!res.ok) throw new Error(res.status);
+        const kullanicilar = await res.json();
 
-        // Tabloyu temizle
-        usersTableTbody.innerHTML = "";
+        // DESC sırala → son kayıt en üstte
+        kullanicilar.sort((a, b) => b.id - a.id);
 
-        // Yeni satırları ekle
-        users.forEach((user) => {
+        tabloGovde.innerHTML = "";
+        kullanicilar.forEach((k) => {
           const tr = document.createElement("tr");
-
-          const tdId = document.createElement("td");
-          tdId.textContent = user.id;
-
-          const tdName = document.createElement("td");
-          tdName.textContent = user.name;
-
-          const tdEmail = document.createElement("td");
-          tdEmail.textContent = user.email;
-
-          const tdActions = document.createElement("td");
-
-          // Edit butonu
-          const editBtn = document.createElement("button");
-          editBtn.textContent = "Edit";
-          editBtn.addEventListener("click", () => {
-            fillFormForEdit(user);
-          });
-
-          // Delete butonu
-          const deleteBtn = document.createElement("button");
-          deleteBtn.textContent = "Delete";
-          deleteBtn.addEventListener("click", () => {
-            deleteUser(user.id);
-          });
-
-          tdActions.appendChild(editBtn);
-          tdActions.appendChild(document.createTextNode(" "));
-          tdActions.appendChild(deleteBtn);
-
-          tr.appendChild(tdId);
-          tr.appendChild(tdName);
-          tr.appendChild(tdEmail);
-          tr.appendChild(tdActions);
-
-          usersTableTbody.appendChild(tr);
+          tr.innerHTML = `
+            <td class="px-3 py-2">${k.id}</td>
+            <td class="px-3 py-2">${k.name}</td>
+            <td class="px-3 py-2">${k.email}</td>
+            <td class="px-3 py-2 space-x-2">
+              <button class="rounded bg-amber-500 px-2 py-1 text-sm hover:bg-amber-600"
+                      data-eylem="duzenle">Düzenle</button>
+              <button class="rounded bg-red-500 px-2 py-1 text-sm hover:bg-red-600"
+                      data-eylem="sil">Sil</button>
+            </td>`;
+          tr.querySelector('[data-eylem="duzenle"]')
+            .addEventListener("click", () => duzenlemeModu(k));
+          tr.querySelector('[data-eylem="sil"]')
+            .addEventListener("click", () => kullaniciSil(k.id));
+          tabloGovde.appendChild(tr);
         });
-
-      } catch (error) {
-        alert("Hata: " + error);
+      } catch (err) {
+        alert("Hata: " + err);
       }
-    }
+    };
 
-    // Formu güncelleme moduna geçiren fonksiyon
-    function fillFormForEdit(user) {
-      userIdInput.value = user.id;
-      nameInput.value = user.name;
-      emailInput.value = user.email;
-      formTitle.textContent = "Update User";
-      submitBtn.textContent = "Update User";
-    }
+    const kullaniciSil = async (id) => {
+      if (!confirm("Bu kullanıcıyı silmek istediğinize emin misiniz?")) return;
+      try {
+        const res = await fetch(`${TEMEL_URL}/${id}`, { method: "DELETE" });
+        if (res.status === 204) tumKullanicilariGetir();
+        else alert("Silme başarısız: " + res.status);
+      } catch (err) {
+        alert("Hata: " + err);
+      }
+    };
 
-    // --- DELETE USER ---
-    async function deleteUser(id) {
-      if (!confirm("Bu kullanıcıyı silmek istediğine emin misin?")) {
+    // === Form Submit ===
+    kullaniciFormu.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!kullaniciFormu.checkValidity()) {
+        kullaniciFormu.reportValidity();
         return;
       }
 
+      const id = kullaniciIdInput.value.trim();
+      const kullaniciVerisi = {
+        name:  adInput.value.trim(),
+        email: epostaInput.value.trim(),
+      };
+
+      const ayarlar = {
+        method: id ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(kullaniciVerisi),
+      };
+      const url = id ? `${TEMEL_URL}/${id}` : TEMEL_URL;
+
       try {
-        const response = await fetch(`${BASE_URL}/${id}`, {
-          method: "DELETE",
-        });
-        if (response.status === 204) {
-          // Silme başarılı
-          alert("Kullanıcı başarıyla silindi.");
-          getAllUsers();
-        } else if (response.status === 404) {
-          alert("Silinmek istenen kullanıcı bulunamadı.");
-        } else {
-          alert("Silme işlemi başarısız oldu. Hata kodu: " + response.status);
-        }
-      } catch (error) {
-        alert("Kullanıcı silinirken hata oluştu: " + error);
-      }
-    }
-
-    // --- GET USER BY EMAIL ---
-    emailForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      if (!emailForm.checkValidity()) {
-        emailForm.reportValidity();
-        return;
-      }
-      try {
-        const searchValue = searchEmail.value.trim();
-        if (!searchValue) return;
-
-        const response = await fetch(`${BASE_URL}/email?email=${encodeURIComponent(searchValue)}`);
-        if (!response.ok) {
-          throw new Error("Kullanıcı aranırken hata oluştu: " + response.status);
-        }
-        const user = await response.json();  // Beklenen tip: Optional<User>
-
-        // user bir Optional<User> şeklinde geliyor.
-        // Java tarafında Optional boşsa JSON'da "null" veya "{}" gibi dönebilir.
-        // Bunu yakalayarak görüntüleyeceğiz.
-        searchResult.classList.remove("hidden");
-        if (user && user.id) {
-          resultContent.textContent = `User Found => ID: ${user.id}, Name: ${user.name}, Email: ${user.email}`;
-        } else {
-          resultContent.textContent = "Kullanıcı bulunamadı veya e-posta eşleşmesi yok.";
-        }
-      } catch (error) {
-        alert("Hata: " + error);
+        const res = await fetch(url, ayarlar);
+        if (!res.ok) throw new Error(res.status);
+        await tumKullanicilariGetir();
+        formuSifirla();
+      } catch (err) {
+        alert("Hata: " + err);
       }
     });
 
-    // Sayfa yüklenince otomatik olarak tüm kullanıcıları çekelim
-    window.addEventListener("load", () => {
-      getAllUsers();
+    sifirlaBtn.addEventListener("click", formuSifirla);
+    tumunuGetirBtn.addEventListener("click", tumKullanicilariGetir);
+
+    // === Arama İşlemleri ===
+    araIdBtn.addEventListener("click", async () => {
+      const id = araIdInput.value.trim();
+      if (!id) return;
+      try {
+        const res = await fetch(`${TEMEL_URL}/${id}`);
+        aramaSonucGoster(res.ok ? await res.json() : null);
+      } catch (err) {
+        alert("Hata: " + err);
+      }
     });
+
+    araAdBtn.addEventListener("click", async () => {
+      const isim = araAdInput.value.trim();
+      if (!isim) return;
+      try {
+        const res = await fetch(`${TEMEL_URL}/isim?isim=${encodeURIComponent(isim)}`);
+        aramaSonucGoster(res.ok ? await res.json() : null);
+      } catch (err) {
+        alert("Hata: " + err);
+      }
+    });
+
+    araEpostaBtn.addEventListener("click", async () => {
+      const mail = araEpostaInput.value.trim();
+      if (!mail) return;
+      try {
+        const res = await fetch(`${TEMEL_URL}/email?email=${encodeURIComponent(mail)}`);
+        aramaSonucGoster(res.ok ? await res.json() : null);
+      } catch (err) {
+        alert("Hata: " + err);
+      }
+    });
+
+    // === İlk Yükleme ===
+    window.addEventListener("load", tumKullanicilariGetir);
 </script>
 </body>
 </html>
