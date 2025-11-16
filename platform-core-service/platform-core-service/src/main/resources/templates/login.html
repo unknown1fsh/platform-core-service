@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Platform Core · Giriş</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body class="login-body">
+<div class="login-shell">
+    <div class="login-brand">
+        <div class="login-logo-mark">PC</div>
+        <div class="login-logo-text">
+            <span>Platform Core</span>
+            <small>Yönetim Paneli</small>
+        </div>
+    </div>
+
+    <div class="login-card">
+        <div class="login-card-header">
+            <h1>Giriş yap</h1>
+            <p>Kontrol paneline erişmek için bilgilerinizi girin.</p>
+        </div>
+
+        <form th:action="@{/login}" method="post" class="login-form">
+            <div class="login-field">
+                <label for="username">Kullanıcı adı</label>
+                <input id="username" type="text" name="username" autocomplete="username" autofocus/>
+            </div>
+            <div class="login-field">
+                <label for="password">Şifre</label>
+                <input id="password" type="password" name="password" autocomplete="current-password"/>
+            </div>
+
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="login-actions">
+                <button class="btn-primary login-submit" type="submit">Giriş yap</button>
+                <span class="login-hint">Demo: <code>admin / Admin123!</code></span>
+            </div>
+
+            <div class="login-status">
+                <div class="login-error" th:if="${param.error}">Hatalı kullanıcı adı veya şifre.</div>
+                <div class="login-info" th:if="${param.logout}">Başarıyla çıkış yaptınız.</div>
+            </div>
+        </form>
+    </div>
+
+    <footer class="login-footer">
+        <span>© <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Platform Core</span>
+        <span>İç sistem · Güvenli erişim</span>
+    </footer>
+</div>
+</body>
+</html>
+

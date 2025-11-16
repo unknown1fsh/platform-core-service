@@ -1,10 +1,12 @@
--- Example cleanup/missing columns safe alterations
-ALTER TABLE user_account ADD COLUMN IF NOT EXISTS deleted_at DATETIME NULL;
-ALTER TABLE parameter ADD COLUMN IF NOT EXISTS deleted_at DATETIME NULL;
+-- Cleanup migration for existing installations.
+-- MySQL 8 ve Flyway birlikte kullanılırken 'IF NOT EXISTS' sentaksı hata verdiği için
+-- bu migration yeni kurulumlarda NO-OP (iş yapmayan) halde bırakıldı.
+-- Gerekirse manuel bakım için aşağıdaki örnekler referans olarak tutulabilir.
 
--- Ensure indexes
-CREATE UNIQUE INDEX IF NOT EXISTS uk_user_username ON user_account (username);
-CREATE INDEX IF NOT EXISTS idx_user_status ON user_account (status);
-CREATE UNIQUE INDEX IF NOT EXISTS uk_parameter_category_code ON parameter (category, code);
-CREATE INDEX IF NOT EXISTS idx_parameter_active ON parameter (active);
+-- ALTER TABLE user_account ADD COLUMN deleted_at DATETIME NULL;
+-- ALTER TABLE parameter ADD COLUMN deleted_at DATETIME NULL;
+-- CREATE UNIQUE INDEX uk_user_username ON user_account (username);
+-- CREATE INDEX idx_user_status ON user_account (status);
+-- CREATE UNIQUE INDEX uk_parameter_category_code ON parameter (category, code);
+-- CREATE INDEX idx_parameter_active ON parameter (active);
 

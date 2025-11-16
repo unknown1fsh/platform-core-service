@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr" th:replace="~{layout :: layout}">
+<body>
+<div th:fragment="content"
+     th:with="activePage='users',pageTitle='Kullanıcılar',pageSubtitle='Kullanıcı hesaplarını görüntüleyin ve yönetin'">
+    <div class="page-header">
+        <div>
+            <h2>Kullanıcılar</h2>
+            <p class="page-subtitle">Filtreleyin, arayın ve detayları düzenleyin.</p>
+        </div>
+        <a class="btn-primary" th:href="@{/users/new}">+ Yeni Kullanıcı</a>
+    </div>
+
+    <form class="filter-bar" method="get">
+        <div class="filter-group">
+            <label for="username">Kullanıcı adı</label>
+            <input id="username" type="text" name="username" th:value="${username}" placeholder="ör. admin"/>
+        </div>
+        <div class="filter-group">
+            <label for="status">Durum</label>
+            <select id="status" name="status">
+                <option value="">(Hepsi)</option>
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+            </select>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-ghost" type="submit">Ara</button>
+        </div>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Kullanıcı</th>
+            <th>Email</th>
+            <th>Durum</th>
+            <th>İşlem</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${page.content}">
+            <td th:text="${u.id}"></td>
+            <td th:text="${u.username}"></td>
+            <td th:text="${u.email}"></td>
+            <td th:text="${u.status}"></td>
+            <td>
+                <a class="table-link" th:href="@{'/users/' + ${u.id} + '/edit'}">Düzenle</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:replace="~{fragments/pagination :: pager(${page})}">
+        <span th:with="pageUrl='/users'"></span>
+    </div>
+</div>
+</body>
+</html>
+

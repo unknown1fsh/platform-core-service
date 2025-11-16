@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr" th:replace="~{layout :: layout}">
+<body>
+<div th:fragment="content"
+     th:with="activePage='roles',pageTitle='Roller',pageSubtitle='Uygulama rollerini yönetin ve yetkileri kontrol edin'">
+    <div class="page-header">
+        <div>
+            <h2>Roller</h2>
+            <p class="page-subtitle">Kullanıcı rollerini ekleyin, düzenleyin ve kaldırın.</p>
+        </div>
+        <a class="btn-primary" th:href="@{/roles/new}">+ Yeni Rol</a>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ad</th>
+            <th>Açıklama</th>
+            <th>İşlem</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="r : ${page.content}">
+            <td th:text="${r.id}"></td>
+            <td th:text="${r.name}"></td>
+            <td th:text="${r.description}"></td>
+            <td>
+                <a class="table-link" th:href="@{'/roles/' + ${r.id} + '/edit'}">Düzenle</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:replace="~{fragments/pagination :: pager(${page})}">
+        <span th:with="pageUrl='/roles'"></span>
+    </div>
+</div>
+</body>
+</html>
+
+

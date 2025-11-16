@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr" th:replace="~{layout :: layout}">
+<body>
+<div th:fragment="content"
+     th:with="activePage='audit',pageTitle='Audit Log',pageSubtitle='Sistemde gerçekleşen önemli aksiyonları izleyin'">
+    <div class="page-header">
+        <div>
+            <h2>Audit Log</h2>
+            <p class="page-subtitle">Kullanıcı aksiyonlarını ve sistem olaylarını geriye dönük görüntüleyin.</p>
+        </div>
+    </div>
+
+    <form class="filter-bar" method="get">
+        <div class="filter-group">
+            <label for="username">Kullanıcı</label>
+            <input id="username" type="text" name="username" th:value="${username}" placeholder="ör. admin"/>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-ghost" type="submit">Ara</button>
+        </div>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Zaman</th>
+            <th>Kullanıcı</th>
+            <th>Aksiyon</th>
+            <th>Kaynak</th>
+            <th>Detay</th>
+            <th>IP</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="log : ${page.content}">
+            <td th:text="${#dates.format(log.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:text="${log.username}"></td>
+            <td th:text="${log.action}"></td>
+            <td th:text="${log.resource}"></td>
+            <td th:text="${log.details}"></td>
+            <td th:text="${log.ipAddress}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:replace="~{fragments/pagination :: pager(${page})}">
+        <span th:with="pageUrl='/audit-logs'"></span>
+    </div>
+</div>
+</body>
+</html>
+
+
