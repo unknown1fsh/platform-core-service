@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr" th:replace="~{layout :: layout}">
+<body>
+<div th:fragment="content"
+     th:with="activePage='users',pageTitle=${dto.id} != null ? 'Kullanıcı Güncelle' : 'Kullanıcı Ekle',pageSubtitle='Zorunlu alanları doldurun ve kaydedin'">
+    <div class="form-card">
+        <h2 th:text="${dto.id} != null ? 'Kullanıcı Güncelle' : 'Kullanıcı Ekle'"></h2>
+        <form th:action="@{${action}}" method="post" class="form-grid">
+            <div class="form-field">
+                <label for="username">Kullanıcı adı</label>
+                <input id="username" type="text" name="username" th:value="${dto.username}" required/>
+            </div>
+            <div class="form-field">
+                <label for="email">Email</label>
+                <input id="email" type="email" name="email" th:value="${dto.email}" required/>
+            </div>
+            <div class="form-field" th:if="${dto.id != null}">
+                <label for="status">Durum</label>
+                <select id="status" name="status" th:value="${dto.status}">
+                    <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+                </select>
+            </div>
+
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="form-actions">
+                <button class="btn-primary" type="submit">Kaydet</button>
+                <a class="btn-ghost" th:href="@{/users}">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+

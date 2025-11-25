@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr" th:fragment="layout">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${title} ?: 'Platform Core'">Platform Core</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <aside class="app-sidebar">
+        <div class="app-logo">
+            <span class="app-logo-mark">PC</span>
+            <span class="app-logo-text">Platform Core</span>
+        </div>
+        <nav class="app-nav">
+            <a class="app-nav-link" th:href="@{/}" th:classappend="${activePage} == 'dashboard' ? ' app-nav-link-active'">
+                <span class="app-nav-icon">🏠</span>
+                <span>Dashboard</span>
+            </a>
+            <a class="app-nav-link" th:href="@{/users}" th:classappend="${activePage} == 'users' ? ' app-nav-link-active'">
+                <span class="app-nav-icon">👥</span>
+                <span>Kullanıcılar</span>
+            </a>
+            <a class="app-nav-link" th:href="@{/parameters}" th:classappend="${activePage} == 'parameters' ? ' app-nav-link-active'">
+                <span class="app-nav-icon">⚙️</span>
+                <span>Parametreler</span>
+            </a>
+            <a class="app-nav-link" th:href="@{/roles}" th:classappend="${activePage} == 'roles' ? ' app-nav-link-active'">
+                <span class="app-nav-icon">🔑</span>
+                <span>Roller</span>
+            </a>
+            <a class="app-nav-link" th:href="@{/audit-logs}" th:classappend="${activePage} == 'audit' ? ' app-nav-link-active'">
+                <span class="app-nav-icon">📜</span>
+                <span>Audit Log</span>
+            </a>
+        </nav>
+        <div class="app-sidebar-footer">
+            <a class="app-nav-link app-nav-link-weak" th:href="@{/logout}">
+                <span class="app-nav-icon">⏏</span>
+                <span>Çıkış</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="app-main">
+        <header class="app-header">
+            <div class="app-header-left">
+                <h1 class="app-page-title" th:text="${pageTitle} ?: 'Dashboard'">Dashboard</h1>
+                <p class="app-page-subtitle" th:text="${pageSubtitle} ?: 'Platform çekirdek servis yönetim paneli'">
+                    Platform çekirdek servis yönetim paneli
+                </p>
+            </div>
+            <div class="app-header-right">
+                <div class="app-user">
+                    <div class="app-user-avatar">U</div>
+                    <div class="app-user-meta">
+                        <div class="app-user-name" th:text="${currentUsername} ?: 'Kullanıcı'">Kullanıcı</div>
+                        <div class="app-user-role">Yönetici</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-content">
+            <div th:insert="~{::content}"></div>
+        </main>
+
+        <footer class="app-footer">
+            <span>© <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Platform Core</span>
+            <span class="app-footer-meta">v1.0 · Internal</span>
+        </footer>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
+

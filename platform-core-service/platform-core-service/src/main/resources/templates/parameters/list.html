@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr" th:replace="~{layout :: layout}">
+<body>
+<div th:fragment="content"
+     th:with="activePage='parameters',pageTitle='Parametreler',pageSubtitle='Sistem parametrelerini arayın ve yönetin'">
+    <div class="page-header">
+        <div>
+            <h2>Parametreler</h2>
+            <p class="page-subtitle">Kategori ve koda göre filtreleyip sonuçları inceleyin.</p>
+        </div>
+        <a class="btn-primary" th:href="@{/parameters/new}">+ Yeni Parametre</a>
+    </div>
+
+    <form class="filter-bar" method="get">
+        <div class="filter-group">
+            <label for="category">Kategori</label>
+            <input id="category" type="text" name="category" th:value="${category}" placeholder="ör. GENERAL"/>
+        </div>
+        <div class="filter-group">
+            <label for="code">Kod</label>
+            <input id="code" type="text" name="code" th:value="${code}" placeholder="ör. MAX_LOGIN_ATTEMPT"/>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-ghost" type="submit">Ara</button>
+        </div>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Kategori</th>
+            <th>Kod</th>
+            <th>Değer</th>
+            <th>Aktif</th>
+            <th>İşlem</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${page.content}">
+            <td th:text="${p.id}"></td>
+            <td th:text="${p.category}"></td>
+            <td th:text="${p.code}"></td>
+            <td th:text="${p.value}"></td>
+            <td th:text="${p.active}"></td>
+            <td>
+                <a class="table-link" th:href="@{'/parameters/' + ${p.id} + '/edit'}">Düzenle</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:replace="~{fragments/pagination :: pager(${page})}">
+        <span th:with="pageUrl='/parameters'"></span>
+    </div>
+</div>
+</body>
+</html>
+

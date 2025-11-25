@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr">
+<body>
+<div th:fragment="pager(page)">
+    <div class="pagination">
+        <a th:if="${!page.first}" th:href="@{${pageUrl}(page=${page.number-1},size=${page.size})}">&laquo;</a>
+        <span th:text="${page.number + 1}"></span>/<span th:text="${page.totalPages}"></span>
+        <a th:if="${!page.last}" th:href="@{${pageUrl}(page=${page.number+1},size=${page.size})}">&raquo;</a>
+    </div>
+    <!-- pageUrl model attribute beklenir -->
+</div>
+</body>
+</html>
+

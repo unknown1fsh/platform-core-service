@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr" th:replace="~{layout :: layout}">
+<body>
+<div th:fragment="content"
+     th:with="activePage='parameters',pageTitle=${dto.id} != null ? 'Parametre Güncelle' : 'Parametre Ekle',pageSubtitle='Sistem davranışını belirleyen parametreleri yönetin'">
+    <div class="form-card">
+        <h2 th:text="${dto.id} != null ? 'Parametre Güncelle' : 'Parametre Ekle'"></h2>
+        <form th:action="@{${action}}" method="post" class="form-grid">
+            <div class="form-field">
+                <label for="category">Kategori</label>
+                <input id="category" type="text" name="category" th:value="${dto.category}" required/>
+            </div>
+            <div class="form-field">
+                <label for="code">Kod</label>
+                <input id="code" type="text" name="code" th:value="${dto.code}" required/>
+            </div>
+            <div class="form-field">
+                <label for="value">Değer</label>
+                <input id="value" type="text" name="value" th:value="${dto.value}" required/>
+            </div>
+            <div class="form-field">
+                <label for="description">Açıklama</label>
+                <input id="description" type="text" name="description" th:value="${dto.description}"/>
+            </div>
+            <div class="form-field" th:if="${dto.id != null}">
+                <label for="active">Aktif</label>
+                <select id="active" name="active" th:value="${dto.active}">
+                    <option th:value="true">true</option>
+                    <option th:value="false">false</option>
+                </select>
+            </div>
+
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="form-actions">
+                <button class="btn-primary" type="submit">Kaydet</button>
+                <a class="btn-ghost" th:href="@{/parameters}">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+

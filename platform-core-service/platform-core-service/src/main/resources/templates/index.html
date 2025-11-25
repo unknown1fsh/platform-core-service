@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr" th:replace="~{layout :: layout}">
+<body>
+<div th:fragment="content"
+     th:with="activePage='dashboard',pageTitle='Genel Bakış',pageSubtitle='Servislerin sağlık durumu ve temel özetler'">
+    <div class="cards">
+        <div class="card">
+            <div>Servis Sağlığı</div>
+            <pre id="health">Yükleniyor...</pre>
+        </div>
+        <div class="card">
+            <div>Hızlı Erişim</div>
+            <ul>
+                <li><a th:href="@{/users}">Kullanıcı yönetimi</a></li>
+                <li><a th:href="@{/parameters}">Parametre yönetimi</a></li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        fetch('/api/health', {credentials: 'include'})
+            .then(r => r.text())
+            .then(t => {
+                document.getElementById('health').innerText = t;
+            })
+            .catch(e => {
+                document.getElementById('health').innerText = 'Hata';
+            });
+    </script>
+</div>
+</body>
+</html>
+
