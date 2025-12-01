@@ -1,366 +1,424 @@
-# 🚀 Simple Service - Kullanıcı Yönetim Sistemi
+# 🚀 Platform Core Service
 
 <div align="center">
 
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.2-brightgreen)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.0-brightgreen)
 ![Java](https://img.shields.io/badge/Java-17-orange)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
-![Thymeleaf](https://img.shields.io/badge/Thymeleaf-3.1-green)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue)
 ![License](https://img.shields.io/badge/License-Free-lightgrey)
 
-**"Basit ama güçlü, sade ama şık!"** ✨
+**Enterprise-grade platform core service with modern admin UI and REST API**
 
-Modern web uygulamaları için tasarlanmış, Spring Boot 3 ve Thymeleaf ile geliştirilmiş kullanıcı yönetim sistemi.
-
-[Özellikler](#-özellikler) • [Kurulum](#-kurulum-ve-çalıştırma) • [Kullanım](#-kullanım) • [API](#-api-endpoints)
+[English](#english) • [Türkçe](#türkçe)
 
 </div>
 
 ---
 
-## 🎯 Proje Hakkında
+## English
 
-Bu proje, **ara sıra girip incelemek** için ideal bir basit servis örneğidir. Hem REST API hem de güzel bir web arayüzü sunar. Thymeleaf template engine ile server-side rendering yapılır, Tailwind CSS ile modern ve responsive bir tasarım kullanılır.
+### 📋 Overview
 
-### ✨ Öne Çıkan Özellikler
+**Platform Core Service** is a comprehensive enterprise application platform built with Spring Boot, featuring a modern admin dashboard and robust REST API. It provides user management, role-based access control, parameter configuration, and audit logging capabilities.
 
-- 🎨 **Modern UI**: Glassmorphism efektleri, gradient arka planlar, animasyonlar
-- 🚀 **Hızlı ve Basit**: Spring Boot 3 ile optimize edilmiş performans
-- 💎 **Thymeleaf Entegrasyonu**: Server-side rendering ile hızlı sayfa yükleme
-- 🔒 **Güvenli Validasyon**: Email format kontrolü, duplicate kontrolü
-- 📊 **Timestamps**: Otomatik oluşturulma ve güncelleme tarihleri
-- 🔍 **Gelişmiş Arama**: ID, isim veya email ile arama yapabilme
-- 📱 **Responsive Tasarım**: Mobil, tablet ve masaüstü uyumlu
-- 🌙 **Dark Mode**: Karanlık mod desteği (localStorage ile saklanır)
+### ✨ Key Features
 
----
+- **🔐 User Management**
+  - Complete CRUD operations for user accounts
+  - User status management (ACTIVE, INACTIVE, BLOCKED)
+  - Advanced filtering and pagination
+  - Secure password handling
 
-## 🏗️ Teknoloji Stack'i
+- **👥 Role-Based Access Control**
+  - Flexible role management system
+  - User-role assignment
+  - Ready for Spring Security integration
 
-| Teknoloji | Versiyon | Amaç |
-|-----------|----------|------|
-| **Java** | 17 | Programlama dili |
-| **Spring Boot** | 3.3.2 | Framework |
-| **Spring Data JPA** | - | Veritabanı erişimi |
-| **Thymeleaf** | - | Template engine |
-| **MySQL** | 8+ | Veritabanı |
-| **Lombok** | 1.18.36 | Kod sadeleştirme |
-| **Tailwind CSS** | CDN | Stil framework'ü |
-| **Maven** | 3.9+ | Build tool |
+- **⚙️ Parameter Management**
+  - Category-based parameter organization
+  - System configuration and feature flags
+  - Dynamic application settings
 
----
+- **📊 Audit Logging**
+  - Comprehensive activity tracking
+  - User action logging
+  - IP address and timestamp tracking
 
-## 📋 Gereksinimler
+- **🎨 Modern Admin UI**
+  - Beautiful dark-themed dashboard
+  - Responsive design
+  - Glassmorphism effects and gradients
+  - Intuitive navigation
 
-Projeyi çalıştırmak için aşağıdakilere ihtiyacınız var:
+### 🛠️ Technology Stack
 
-- ☕ **Java 17** veya üzeri
-- 🗄️ **MySQL 8.0** veya üzeri
-- 🔧 **Maven 3.9+**
-- 💻 **IDE** (IntelliJ IDEA, Eclipse, VS Code vb.)
+| Category | Technology |
+|----------|-----------|
+| **Backend** | Java 17, Spring Boot 3.3.0 |
+| **Security** | Spring Security 6 |
+| **Database** | PostgreSQL 17 |
+| **ORM** | Spring Data JPA, Hibernate |
+| **Migration** | Flyway 11.0.0 |
+| **Templating** | Thymeleaf |
+| **Mapping** | MapStruct |
+| **Build Tool** | Maven 3.9+ |
 
----
+### 📦 Prerequisites
 
-## 🚀 Kurulum ve Çalıştırma
+- **Java 17** or higher
+- **Maven 3.9+** (or use included Maven wrapper)
+- **PostgreSQL 17** or higher
 
-### 1️⃣ MySQL Veritabanını Hazırlayın
+### 🚀 Quick Start
 
-MySQL'e bağlanın ve veritabanını oluşturun:
+#### 1. Database Setup
+
+Create the PostgreSQL database:
 
 ```sql
--- MySQL'e root kullanıcısı ile bağlanın
-mysql -u root -p
-
--- Veritabanını oluşturun
-CREATE DATABASE simple_service CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- Veritabanını kullanın
-USE simple_service;
-
--- Tablo otomatik olarak oluşturulacak (Hibernate DDL Auto)
--- Ancak manuel oluşturmak isterseniz:
-CREATE TABLE app_user (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL UNIQUE,
-    created_at DATETIME NULL,
-    updated_at DATETIME NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE DATABASE platform_core_service ENCODING 'UTF8';
 ```
 
-### 2️⃣ Veritabanı Bağlantı Ayarları
+#### 2. Configuration
 
-`src/main/resources/application.properties` dosyasında MySQL bağlantı bilgileri zaten yapılandırılmış:
+Update `src/main/resources/application.properties` with your database credentials:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/simple_service?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-spring.datasource.username=root
-spring.datasource.password=12345
+spring.datasource.url=jdbc:postgresql://localhost:5432/platform_core_service
+spring.datasource.username=postgres
+spring.datasource.password=your_password
 ```
 
-> ⚠️ **Güvenlik Notu**: Production ortamında şifreleri environment variable olarak kullanın!
+#### 3. Run the Application
 
-### 3️⃣ Projeyi Çalıştırın
+Using Maven wrapper:
 
 ```bash
-# Projeyi klonlayın (eğer git repo ise)
-git clone <repo-url>
-cd simple-service
+# Windows
+.\mvnw.cmd spring-boot:run
 
-# Maven ile bağımlılıkları indirin ve projeyi çalıştırın
-mvn clean install
-mvn spring-boot:run
+# Linux/Mac
+./mvnw spring-boot:run
 ```
 
-Alternatif olarak IDE'nizden `SimpleServiceApplication.java` dosyasını çalıştırabilirsiniz.
+Or with Maven:
 
-### 4️⃣ Tarayıcıda Açın
-
-Uygulama başladıktan sonra tarayıcınızda şu adrese gidin:
-
-```
-http://localhost:8080
+```bash
+mvn clean spring-boot:run
 ```
 
-🎉 **Tebrikler!** Artık kullanıcı yönetim sisteminiz hazır!
+#### 4. Access the Application
 
----
+- **Web UI**: http://localhost:8080
+- **API Health**: http://localhost:8080/api/health
+- **Login**: http://localhost:8080/login
 
-## 📁 Proje Yapısı
+**Default Credentials:**
+- Username: `admin`
+- Password: `Admin123!`
+
+### 📁 Project Structure
 
 ```
-simple-service/
+platform-core-service/
 ├── src/
 │   ├── main/
-│   │   ├── java/com/example/simple_service/
-│   │   │   ├── controller/
-│   │   │   │   ├── UserController.java      # REST API endpoints
-│   │   │   │   └── UserViewController.java  # Thymeleaf view endpoints
-│   │   │   ├── entity/
-│   │   │   │   └── User.java                # JPA Entity
-│   │   │   ├── repository/
-│   │   │   │   └── UserRepository.java      # Spring Data JPA Repository
-│   │   │   ├── service/
-│   │   │   │   ├── UserService.java         # Service interface
-│   │   │   │   └── impl/
-│   │   │   │       └── UserServiceImpl.java # Service implementation
-│   │   │   ├── exception/
-│   │   │   │   └── GlobalExceptionHandler.java # Exception handling
-│   │   │   └── SimpleServiceApplication.java # Main class
+│   │   ├── java/com/sahip/platform/core/
+│   │   │   ├── client/          # External API clients
+│   │   │   ├── config/          # Configuration classes
+│   │   │   ├── controller/      # REST & UI controllers
+│   │   │   ├── dto/             # Data Transfer Objects
+│   │   │   ├── entity/          # JPA entities
+│   │   │   ├── enums/           # Enumerations
+│   │   │   ├── exception/       # Exception handlers
+│   │   │   ├── mapper/          # MapStruct mappers
+│   │   │   ├── repository/      # Spring Data repositories
+│   │   │   ├── service/         # Business logic
+│   │   │   └── specification/   # JPA specifications
 │   │   └── resources/
-│   │       ├── templates/                   # Thymeleaf templates
-│   │       │   ├── layout.html              # Base layout
-│   │       │   ├── index.html               # Ana sayfa
-│   │       │   └── users/
-│   │       │       ├── list.html            # Kullanıcı listesi
-│   │       │       └── form.html            # Kullanıcı formu
-│   │       ├── static/                      # Static dosyalar
-│   │       └── application.properties       # Konfigürasyon
-│   └── test/                                # Test dosyaları
-├── pom.xml                                  # Maven dependencies
-└── README.md                                # Bu dosya
+│   │       ├── db/migration/    # Flyway migrations
+│   │       ├── static/          # CSS, JS files
+│   │       └── templates/      # Thymeleaf templates
+│   └── test/                    # Test classes
+├── pom.xml
+└── README.md
 ```
 
----
+### 🗄️ Database Migrations
 
-## 🔌 API Endpoints
+Flyway migrations are automatically executed on application startup:
 
-### REST API (JSON)
+- `V1__baseline.sql` - Creates `user_account` and `parameter` tables
+- `V2__roles_and_audit_tables.sql` - Creates `role`, `user_role`, and `audit_log` tables
+- `V3__seed_users_parameters_audit.sql` - Seeds initial data (users, roles, parameters, audit logs)
 
-| Metot | Endpoint | Açıklama | Request Body |
-|-------|----------|----------|--------------|
-| `GET` | `/users` | Tüm kullanıcıları listele | - |
-| `GET` | `/users/{id}` | ID'ye göre kullanıcı getir | - |
-| `GET` | `/users/email?email={email}` | Email'e göre kullanıcı getir | - |
-| `POST` | `/users` | Yeni kullanıcı oluştur | `{"name": "...", "email": "..."}` |
-| `PUT` | `/users/{id}` | Kullanıcı güncelle | `{"name": "...", "email": "..."}` |
-| `DELETE` | `/users/{id}` | Kullanıcı sil | - |
+### 🔒 Security
 
-### Web UI (Thymeleaf)
+- Spring Security 6 integration
+- Form-based authentication
+- Role-based access control (ready for implementation)
+- Secure password storage
+- Session management
 
-| Endpoint | Açıklama |
-|----------|----------|
-| `/` | Ana sayfa |
-| `/users/view` | Kullanıcı listesi (arama parametreleri: `?id=`, `?name=`, `?email=`) |
-| `/users/form` | Yeni kullanıcı formu |
-| `/users/form?id={id}` | Kullanıcı düzenleme formu |
+### 📝 API Endpoints
 
----
+#### REST API
 
-## 💻 Kullanım Örnekleri
+- `GET /api/health` - Health check endpoint
+- `GET /api/users` - List users (with pagination and filtering)
+- `POST /api/users` - Create new user
+- `PUT /api/users/{id}` - Update user
+- `DELETE /api/users/{id}` - Delete user
+- `GET /api/parameters` - List parameters
+- `GET /api/roles` - List roles
 
-### cURL ile REST API Kullanımı
+#### Web UI
+
+- `/` - Dashboard
+- `/login` - Login page
+- `/users` - User management
+- `/parameters` - Parameter management
+- `/roles` - Role management
+- `/audit-logs` - Audit log viewer
+
+### 🧪 Development
+
+#### Running Tests
 
 ```bash
-# Yeni kullanıcı oluştur
-curl -X POST http://localhost:8080/users \
-     -H "Content-Type: application/json" \
-     -d '{"name":"Ahmet Yılmaz","email":"ahmet@example.com"}'
-
-# Tüm kullanıcıları listele
-curl http://localhost:8080/users
-
-# ID'ye göre kullanıcı getir
-curl http://localhost:8080/users/1
-
-# Email'e göre kullanıcı getir
-curl "http://localhost:8080/users/email?email=ahmet@example.com"
-
-# Kullanıcı güncelle
-curl -X PUT http://localhost:8080/users/1 \
-     -H "Content-Type: application/json" \
-     -d '{"name":"Ahmet Yılmaz","email":"ahmet.yilmaz@example.com"}'
-
-# Kullanıcı sil
-curl -X DELETE http://localhost:8080/users/1
-```
-
-### Web Arayüzü Kullanımı
-
-1. **Ana Sayfa**: `http://localhost:8080` - Proje hakkında bilgi ve hızlı erişim
-2. **Kullanıcı Listesi**: `http://localhost:8080/users/view` - Tüm kullanıcıları görüntüle, ara, düzenle, sil
-3. **Yeni Kullanıcı**: `http://localhost:8080/users/form` - Yeni kullanıcı ekle
-4. **Kullanıcı Düzenle**: Listeden "Düzenle" butonuna tıklayın
-
----
-
-## 🎨 Özellikler Detayı
-
-### ✅ Validasyon Özellikleri
-
-- ✉️ **Email Format Kontrolü**: Regex ile email formatı doğrulanır
-- 🔒 **Unique Email**: Aynı email ile birden fazla kullanıcı kaydedilemez
-- 📏 **Uzunluk Kontrolü**: İsim max 100, email max 150 karakter
-- 🚫 **Boş Alan Kontrolü**: Zorunlu alanlar kontrol edilir
-
-### 🗄️ Veritabanı Özellikleri
-
-- 📅 **Otomatik Timestamps**: `created_at` ve `updated_at` otomatik güncellenir
-- 🔑 **Primary Key**: Auto-increment ID
-- 🎯 **Unique Constraint**: Email alanı unique
-- 📊 **Index**: Email alanı için otomatik index
-
-### 🎭 UI/UX Özellikleri
-
-- 🌈 **Gradient Arka Planlar**: Modern görsel efektler
-- 💎 **Glassmorphism**: Cam efekti kartlar
-- 🌙 **Dark Mode Toggle**: Karanlık mod desteği (localStorage ile saklanır)
-- 📱 **Responsive**: Mobil, tablet, masaüstü uyumlu
-- ✨ **Animasyonlar**: Hover efektleri, float animasyonları
-- 🔔 **Flash Messages**: Başarı/hata mesajları
-- 🎯 **Error Handling**: Browser extension hatalarını otomatik filtreleme
-
----
-
-## 🐛 Sorun Giderme
-
-### Veritabanı Bağlantı Hatası
-
-```
-Error: Access denied for user 'root'@'localhost'
-```
-
-**Çözüm**: MySQL şifrenizi kontrol edin. `application.properties` dosyasında doğru şifreyi girin.
-
-### Port Zaten Kullanımda
-
-```
-Error: Port 8080 is already in use
-```
-
-**Çözüm**: 
-- Başka bir port kullanın: `server.port=8081` ekleyin `application.properties`'e
-- Veya 8080 portunu kullanan uygulamayı durdurun
-
-### Tablo Bulunamadı
-
-```
-Error: Table 'simple_service.app_user' doesn't exist
-```
-
-**Çözüm**: 
-- `spring.jpa.hibernate.ddl-auto=update` ayarının aktif olduğundan emin olun
-- Uygulamayı yeniden başlatın (Hibernate tabloyu otomatik oluşturacaktır)
-
-### Timestamp Kolonları Hatası
-
-Eğer mevcut tabloda veri varsa ve timestamp kolonları eklenemiyorsa:
-
-```sql
-USE simple_service;
-ALTER TABLE app_user ADD COLUMN created_at DATETIME NULL;
-ALTER TABLE app_user ADD COLUMN updated_at DATETIME NULL;
-UPDATE app_user SET created_at = NOW(), updated_at = NOW();
-```
-
----
-
-## 🧪 Test Etme
-
-```bash
-# Maven ile testleri çalıştır
 mvn test
-
-# Sadece uygulamayı çalıştır (test olmadan)
-mvn spring-boot:run
 ```
 
----
+#### Building the Project
 
-## 📚 Öğrenme Kaynakları
+```bash
+mvn clean package
+```
 
-Bu projede kullanılan teknolojiler hakkında daha fazla bilgi:
+#### Development Mode
+
+The project includes Spring Boot DevTools for hot reloading during development.
+
+### 📚 Additional Resources
 
 - [Spring Boot Documentation](https://spring.io/projects/spring-boot)
-- [Thymeleaf Documentation](https://www.thymeleaf.org/documentation.html)
-- [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
-- [MySQL Documentation](https://dev.mysql.com/doc/)
-- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Spring Security Documentation](https://spring.io/projects/spring-security)
+- [Flyway Documentation](https://flywaydb.org/documentation/)
+- [MapStruct Documentation](https://mapstruct.org/documentation/stable/reference/html/)
+
+### 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+### 📄 License
+
+This project is free to use and modify.
 
 ---
 
-## 🤝 Katkıda Bulunma
+## Türkçe
 
-Katkılarınızı bekliyoruz! 
+### 📋 Genel Bakış
 
-1. 🍴 Projeyi fork edin
-2. 🌿 Yeni bir branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. 💾 Değişikliklerinizi commit edin (`git commit -m 'Add amazing feature'`)
-4. 📤 Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. 🔄 Pull Request oluşturun
+**Platform Core Service**, Spring Boot ile geliştirilmiş, modern bir admin paneli ve güçlü REST API sunan kapsamlı bir kurumsal uygulama platformudur. Kullanıcı yönetimi, rol tabanlı erişim kontrolü, parametre yapılandırması ve denetim kayıtları özelliklerini sağlar.
 
----
+### ✨ Temel Özellikler
 
-## 📝 Lisans
+- **🔐 Kullanıcı Yönetimi**
+  - Kullanıcı hesapları için tam CRUD işlemleri
+  - Kullanıcı durum yönetimi (AKTİF, PASİF, BLOKELİ)
+  - Gelişmiş filtreleme ve sayfalama
+  - Güvenli şifre işleme
 
-Bu proje eğitim ve kişisel kullanım amaçlıdır. İstediğiniz gibi kullanabilirsiniz.
+- **👥 Rol Tabanlı Erişim Kontrolü**
+  - Esnek rol yönetim sistemi
+  - Kullanıcı-rol atama
+  - Spring Security entegrasyonu için hazır
 
----
+- **⚙️ Parametre Yönetimi**
+  - Kategori bazlı parametre organizasyonu
+  - Sistem yapılandırması ve özellik bayrakları
+  - Dinamik uygulama ayarları
 
-## 💬 İletişim
+- **📊 Denetim Kayıtları**
+  - Kapsamlı aktivite takibi
+  - Kullanıcı eylem kayıtları
+  - IP adresi ve zaman damgası takibi
 
-Sorularınız, önerileriniz veya hata bildirimleri için:
+- **🎨 Modern Admin Arayüzü**
+  - Güzel koyu temalı dashboard
+  - Duyarlı tasarım
+  - Glassmorphism efektleri ve gradyanlar
+  - Sezgisel navigasyon
 
-- 📧 Issue açabilirsiniz
-- 💬 Discussion başlatabilirsiniz
-- ⭐ Projeyi beğenmeyi unutmayın!
+### 🛠️ Teknoloji Yığını
 
----
+| Kategori | Teknoloji |
+|----------|-----------|
+| **Backend** | Java 17, Spring Boot 3.3.0 |
+| **Güvenlik** | Spring Security 6 |
+| **Veritabanı** | PostgreSQL 17 |
+| **ORM** | Spring Data JPA, Hibernate |
+| **Migration** | Flyway 11.0.0 |
+| **Şablonlama** | Thymeleaf |
+| **Mapping** | MapStruct |
+| **Build Aracı** | Maven 3.9+ |
 
-## 🎉 Teşekkürler
+### 📦 Ön Gereksinimler
 
-Bu projeyi kullandığınız için teşekkürler! 
+- **Java 17** veya üzeri
+- **Maven 3.9+** (veya dahil edilen Maven wrapper)
+- **PostgreSQL 17** veya üzeri
 
-> **"Kod yazmak bir sanattır, basitlik ise en yüksek formudur."** 🎨
+### 🚀 Hızlı Başlangıç
 
-**Mutlu kodlamalar!** 🚀✨
+#### 1. Veritabanı Kurulumu
+
+PostgreSQL veritabanını oluşturun:
+
+```sql
+CREATE DATABASE platform_core_service ENCODING 'UTF8';
+```
+
+#### 2. Yapılandırma
+
+`src/main/resources/application.properties` dosyasını veritabanı bilgilerinizle güncelleyin:
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/platform_core_service
+spring.datasource.username=postgres
+spring.datasource.password=şifreniz
+```
+
+#### 3. Uygulamayı Çalıştırma
+
+Maven wrapper kullanarak:
+
+```bash
+# Windows
+.\mvnw.cmd spring-boot:run
+
+# Linux/Mac
+./mvnw spring-boot:run
+```
+
+Veya Maven ile:
+
+```bash
+mvn clean spring-boot:run
+```
+
+#### 4. Uygulamaya Erişim
+
+- **Web Arayüzü**: http://localhost:8080
+- **API Sağlık Kontrolü**: http://localhost:8080/api/health
+- **Giriş**: http://localhost:8080/login
+
+**Varsayılan Giriş Bilgileri:**
+- Kullanıcı adı: `admin`
+- Şifre: `Admin123!`
+
+### 📁 Proje Yapısı
+
+```
+platform-core-service/
+├── src/
+│   ├── main/
+│   │   ├── java/com/sahip/platform/core/
+│   │   │   ├── client/          # Harici API istemcileri
+│   │   │   ├── config/          # Yapılandırma sınıfları
+│   │   │   ├── controller/      # REST ve UI controller'ları
+│   │   │   ├── dto/             # Veri Transfer Nesneleri
+│   │   │   ├── entity/          # JPA entity'leri
+│   │   │   ├── enums/           # Enum'lar
+│   │   │   ├── exception/       # Hata yöneticileri
+│   │   │   ├── mapper/          # MapStruct mapper'ları
+│   │   │   ├── repository/      # Spring Data repository'leri
+│   │   │   ├── service/         # İş mantığı
+│   │   │   └── specification/   # JPA spesifikasyonları
+│   │   └── resources/
+│   │       ├── db/migration/    # Flyway migration'ları
+│   │       ├── static/          # CSS, JS dosyaları
+│   │       └── templates/       # Thymeleaf şablonları
+│   └── test/                    # Test sınıfları
+├── pom.xml
+└── README.md
+```
+
+### 🗄️ Veritabanı Migration'ları
+
+Flyway migration'ları uygulama başlatıldığında otomatik olarak çalıştırılır:
+
+- `V1__baseline.sql` - `user_account` ve `parameter` tablolarını oluşturur
+- `V2__roles_and_audit_tables.sql` - `role`, `user_role` ve `audit_log` tablolarını oluşturur
+- `V3__seed_users_parameters_audit.sql` - Başlangıç verilerini ekler (kullanıcılar, roller, parametreler, denetim kayıtları)
+
+### 🔒 Güvenlik
+
+- Spring Security 6 entegrasyonu
+- Form tabanlı kimlik doğrulama
+- Rol tabanlı erişim kontrolü (uygulama için hazır)
+- Güvenli şifre saklama
+- Oturum yönetimi
+
+### 📝 API Endpoint'leri
+
+#### REST API
+
+- `GET /api/health` - Sağlık kontrolü endpoint'i
+- `GET /api/users` - Kullanıcı listesi (sayfalama ve filtreleme ile)
+- `POST /api/users` - Yeni kullanıcı oluştur
+- `PUT /api/users/{id}` - Kullanıcı güncelle
+- `DELETE /api/users/{id}` - Kullanıcı sil
+- `GET /api/parameters` - Parametre listesi
+- `GET /api/roles` - Rol listesi
+
+#### Web Arayüzü
+
+- `/` - Dashboard
+- `/login` - Giriş sayfası
+- `/users` - Kullanıcı yönetimi
+- `/parameters` - Parametre yönetimi
+- `/roles` - Rol yönetimi
+- `/audit-logs` - Denetim kayıtları görüntüleyici
+
+### 🧪 Geliştirme
+
+#### Testleri Çalıştırma
+
+```bash
+mvn test
+```
+
+#### Projeyi Derleme
+
+```bash
+mvn clean package
+```
+
+#### Geliştirme Modu
+
+Proje, geliştirme sırasında hot reload için Spring Boot DevTools içerir.
+
+### 📚 Ek Kaynaklar
+
+- [Spring Boot Dokümantasyonu](https://spring.io/projects/spring-boot)
+- [Spring Security Dokümantasyonu](https://spring.io/projects/spring-security)
+- [Flyway Dokümantasyonu](https://flywaydb.org/documentation/)
+- [MapStruct Dokümantasyonu](https://mapstruct.org/documentation/stable/reference/html/)
+
+### 🤝 Katkıda Bulunma
+
+Katkılarınız memnuniyetle karşılanır! Lütfen bir Pull Request göndermekten çekinmeyin.
+
+### 📄 Lisans
+
+Bu proje kullanım ve değiştirme için ücretsizdir.
 
 ---
 
 <div align="center">
 
-**Yapıldı ❤️ ile Spring Boot ve Thymeleaf kullanılarak**
-
-[⬆ Yukarı Çık](#-simple-service---kullanıcı-yönetim-sistemi)
+**Made with ❤️ using Spring Boot**
 
 </div>
